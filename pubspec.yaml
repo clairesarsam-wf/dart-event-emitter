@@ -1,5 +1,5 @@
 name: event_emitter
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/JosephMoniz/dart-event-emitter
 description: >
   An extendable event emitter
