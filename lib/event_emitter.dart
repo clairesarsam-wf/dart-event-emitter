@@ -5,7 +5,7 @@ import 'package:dictionary/dictionary.dart';
 class EventEmitter {
 
   /**
-   * Mapping of events to a lists of event handlers
+   * Mapping of events to a list of event handlers
    */
   Dictionary<String, List<Function>> _events;
 
@@ -47,7 +47,7 @@ class EventEmitter {
   }
 
   /**
-   * This function attempts to unbind the `handler` fromt the `event`
+   * This function attempts to unbind the `handler` from the `event`
    *
    * @param String event     - The event to remove the handler from
    * @param Function handler - The handler to remove
