@@ -5,15 +5,21 @@ import 'package:dictionary/dictionary.dart';
 class EventEmitter {
 
   /**
-   * Mapping of events to a lists of event handlers
+   * Mapping of events to a list of event handlers
    */
   Dictionary<String, List<Function>> _events;
+
+  /**
+   * Mapping of events to a list of one-time event handlers
+   */
+  Dictionary<String, List<Function>> _eventsOnce;
 
   /**
    * Typical constructor
    */
   EventEmitter() {
     this._events = new Dictionary<String, List<Function>>();
+    this._eventsOnce = new Dictionary<String, List<Function>>();
   }
 
   /**
@@ -29,6 +35,9 @@ class EventEmitter {
       handlers.forEach((Function handler) {
         handler(data);
       });
+    });
+    this._eventsOnce.remove(event).forEach((Function handler) {
+      handler(data);
     });
   }
 
@@ -47,7 +56,23 @@ class EventEmitter {
   }
 
   /**
-   * This function attempts to unbind the `handler` fromt the `event`
+   * This function binds the `handler` as a listener to the first
+   * occurrence of the `event`. When `handler` is called once,
+   * it is removed.
+   *
+   * @param String event     - The event to add the handler to
+   * @param Function handler - The handler to bind to the event
+   * @return void
+   */
+  void once(String event, Function handler) {
+    this._eventsOnce.putIfAbsent(event, () => new List<Function>());
+    this._eventsOnce.get(event).map((List<Function> handlers) {
+      handlers.add(handler);
+    });
+  }
+
+  /**
+   * This function attempts to unbind the `handler` from the `event`
    *
    * @param String event     - The event to remove the handler from
    * @param Function handler - The handler to remove
@@ -56,6 +81,9 @@ class EventEmitter {
   void off(String event, Function handler) {
     this._events.get(event).map((List<Function> handlers) {
       this._events[event] = handlers.where((h) => h != handler).toList();
+    });
+    this._eventsOnce.get(event).map((List<Function> handlers) {
+      this._eventsOnce[event] = handlers.where((h) => h != handler).toList();
     });
   }
 
@@ -66,6 +94,7 @@ class EventEmitter {
    */
   void clearListeners() {
     this._events = new Dictionary<String, List<Function>>();
+    this._eventsOnce = new Dictionary<String, List<Function>>();
   }
 
 }
