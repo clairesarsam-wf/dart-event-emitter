@@ -7,20 +7,12 @@ class EventEmitter {
   /**
    * Mapping of events to a list of event handlers
    */
-  Dictionary<String, List<Function>> _events;
+  Dictionary<String, List<Function>> _events = new Dictionary<String, List<Function>>();
 
   /**
    * Mapping of events to a list of one-time event handlers
    */
-  Dictionary<String, List<Function>> _eventsOnce;
-
-  /**
-   * Typical constructor
-   */
-  EventEmitter() {
-    this._events = new Dictionary<String, List<Function>>();
-    this._eventsOnce = new Dictionary<String, List<Function>>();
-  }
+  Dictionary<String, List<Function>> _eventsOnce = new Dictionary<String, List<Function>>();
 
   /**
    * This function triggers all the handlers currently listening
