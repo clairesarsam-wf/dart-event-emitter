@@ -1,18 +1,16 @@
 library event_emitter;
 
-import 'package:dictionary/dictionary.dart';
-
 class EventEmitter {
 
   /**
    * Mapping of events to a list of event handlers
    */
-  Dictionary<String, List<Function>> _events = new Dictionary<String, List<Function>>();
+  Map<String, List<Function>> _events = new Map<String, List<Function>>();
 
   /**
    * Mapping of events to a list of one-time event handlers
    */
-  Dictionary<String, List<Function>> _eventsOnce = new Dictionary<String, List<Function>>();
+  Map<String, List<Function>> _eventsOnce = new Map<String, List<Function>>();
 
   /**
    * This function triggers all the handlers currently listening
@@ -23,13 +21,12 @@ class EventEmitter {
    * @return void
    */
   void emit(String event, dynamic data) {
-    this._events.get(event).map((List<Function> handlers) {
-      handlers.forEach((Function handler) {
-        handler(data);
-      });
-    });
-    this._eventsOnce.remove(event).forEach((Function handler) {
+    _getHandlers(this._events, event).forEach((Function handler) {
       handler(data);
+    });
+    _getHandlers(this._eventsOnce, event).forEach((Function handler) {
+      handler(data);
+      off(event, handler);
     });
   }
 
@@ -42,9 +39,7 @@ class EventEmitter {
    */
   void on(String event, Function handler) {
     this._events.putIfAbsent(event, () => new List<Function>());
-    this._events.get(event).map((List<Function> handlers) {
-      handlers.add(handler);
-    });
+    this._getHandlers(this._events, event).add(handler);
   }
 
   /**
@@ -58,9 +53,7 @@ class EventEmitter {
    */
   void once(String event, Function handler) {
     this._eventsOnce.putIfAbsent(event, () => new List<Function>());
-    this._eventsOnce.get(event).map((List<Function> handlers) {
-      handlers.add(handler);
-    });
+    _getHandlers(this._eventsOnce, event).add(handler);
   }
 
   /**
@@ -71,12 +64,8 @@ class EventEmitter {
    * @return void
    */
   void off(String event, Function handler) {
-    this._events.get(event).map((List<Function> handlers) {
-      this._events[event] = handlers.where((h) => h != handler).toList();
-    });
-    this._eventsOnce.get(event).map((List<Function> handlers) {
-      this._eventsOnce[event] = handlers.where((h) => h != handler).toList();
-    });
+    this._events[event] = _getHandlers(this._events, event).where((h) => h != handler).toList();
+    this._eventsOnce[event] = _getHandlers(this._eventsOnce, event).where((h) => h != handler).toList();
   }
 
   /**
@@ -85,8 +74,21 @@ class EventEmitter {
    * @return void
    */
   void clearListeners() {
-    this._events = new Dictionary<String, List<Function>>();
-    this._eventsOnce = new Dictionary<String, List<Function>>();
+    this._events = new Map<String, List<Function>>();
+    this._eventsOnce = new Map<String, List<Function>>();
   }
 
+  /**
+   * This utility function returns list of handlers for an event
+   *
+   * @param Map <String, List<Function>> events - the map to retrieve the handlers from
+   * @param String event - the event to retrieve the handlers for
+   * @return List<Function>
+   */
+  List<Function> _getHandlers(Map <String, List<Function>> events, String event) {
+    if (events.containsKey(event)) {
+      return events[event];
+    }
+    return new List<Function>();
+  }
 }

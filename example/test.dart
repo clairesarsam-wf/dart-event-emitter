@@ -1,7 +1,6 @@
 import 'package:event_emitter/event_emitter.dart';
 
 main() {
-
   var events  = new EventEmitter();
   var handler = (v) => print("*** called handler");
 
@@ -21,4 +20,10 @@ main() {
   events.emit("boom", "some data");
   print("should not have called handler.");
 
+  events.once("boom", handler);
+  events.emit("boom", "some data");
+  print("should have called handler.");
+
+  events.emit("boom", "some data");
+  print("should not have called handler.");
 }
