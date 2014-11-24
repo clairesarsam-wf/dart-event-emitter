@@ -1,8 +1,8 @@
 name: event_emitter
 version: 0.2.0
-homepage: https://github.com/JosephMoniz/dart-event-emitter
-description: >
+homepage: https://github.com/clairesarsam-wf/dart-event-emitter
+description:
   An extendable event emitter
-author: Joseph Moniz <joseph.moniz@gmail.com>
-dependencies:
-  dictionary: '>=0.2.0 <0.3.0'
+authors:
+  Joseph Moniz <joseph.moniz@gmail.com>
+  Claire Sarsam <csarsam@gmail.com>
