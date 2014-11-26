@@ -20,12 +20,12 @@ class EventEmitter {
    * @param dynamic data - The data to send to each handler
    * @return void
    */
-  void emit(String event, dynamic data) {
+  void emit(String event, [dynamic data]) {
     _getHandlers(this._events, event).forEach((Function handler) {
-      handler(data);
+      data != null ? handler(data) : handler();
     });
     _getHandlers(this._eventsOnce, event).forEach((Function handler) {
-      handler(data);
+      data != null ? handler(data) : handler();
       off(event, handler);
     });
   }
