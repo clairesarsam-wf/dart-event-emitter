@@ -5,12 +5,12 @@ class EventEmitter {
   /**
    * Mapping of events to a list of event handlers
    */
-  Map<String, List<Function>> _events = new Map<String, List<Function>>();
+  Map<String, List<Function>> listeners = new Map<String, List<Function>>();
 
   /**
    * Mapping of events to a list of one-time event handlers
    */
-  Map<String, List<Function>> _eventsOnce = new Map<String, List<Function>>();
+  Map<String, List<Function>> listenersOnce = new Map<String, List<Function>>();
 
   /**
    * This function triggers all the handlers currently listening
@@ -21,10 +21,10 @@ class EventEmitter {
    * @return void
    */
   void emit(String event, [dynamic data]) {
-    _getHandlers(this._events, event).forEach((Function handler) {
+    _getHandlers(this.listeners, event).forEach((Function handler) {
       data != null ? handler(data) : handler();
     });
-    _getHandlers(this._eventsOnce, event).forEach((Function handler) {
+    _getHandlers(this.listenersOnce, event).forEach((Function handler) {
       data != null ? handler(data) : handler();
       off(event, handler);
     });
@@ -38,8 +38,8 @@ class EventEmitter {
    * @return void
    */
   void on(String event, Function handler) {
-    this._events.putIfAbsent(event, () => new List<Function>());
-    this._getHandlers(this._events, event).add(handler);
+    this.listeners.putIfAbsent(event, () => new List<Function>());
+    this._getHandlers(this.listeners, event).add(handler);
   }
 
   /**
@@ -52,8 +52,8 @@ class EventEmitter {
    * @return void
    */
   void once(String event, Function handler) {
-    this._eventsOnce.putIfAbsent(event, () => new List<Function>());
-    _getHandlers(this._eventsOnce, event).add(handler);
+    this.listenersOnce.putIfAbsent(event, () => new List<Function>());
+    _getHandlers(this.listenersOnce, event).add(handler);
   }
 
   /**
@@ -64,8 +64,8 @@ class EventEmitter {
    * @return void
    */
   void off(String event, Function handler) {
-    this._events[event] = _getHandlers(this._events, event).where((h) => h != handler).toList();
-    this._eventsOnce[event] = _getHandlers(this._eventsOnce, event).where((h) => h != handler).toList();
+    this.listeners[event] = _getHandlers(this.listeners, event).where((h) => h != handler).toList();
+    this.listenersOnce[event] = _getHandlers(this.listenersOnce, event).where((h) => h != handler).toList();
   }
 
   /**
@@ -74,8 +74,8 @@ class EventEmitter {
    * @return void
    */
   void clearListeners() {
-    this._events = new Map<String, List<Function>>();
-    this._eventsOnce = new Map<String, List<Function>>();
+    this.listeners = new Map<String, List<Function>>();
+    this.listenersOnce = new Map<String, List<Function>>();
   }
 
   /**
